@@ -2,6 +2,7 @@
   const sb = window.supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey);
 
   const loginView = document.getElementById('loginView');
+  const forceChangeView = document.getElementById('forceChangeView');
   const listView = document.getElementById('listView');
   const detailView = document.getElementById('detailView');
   const logoutBtn = document.getElementById('logoutBtn');
@@ -25,29 +26,52 @@
     return data;
   }
 
-  function showLoggedIn() {
+  function hideAllViews() {
     loginView.style.display = 'none';
-    listView.style.display = 'block';
+    forceChangeView.style.display = 'none';
+    listView.style.display = 'none';
     detailView.style.display = 'none';
+  }
+
+  function showLoggedIn() {
+    hideAllViews();
+    listView.style.display = 'block';
     logoutBtn.style.display = 'inline-flex';
     loadStudents();
   }
 
   function showLoggedOut() {
+    hideAllViews();
     loginView.style.display = 'block';
-    listView.style.display = 'none';
-    detailView.style.display = 'none';
     logoutBtn.style.display = 'none';
   }
 
-  // ---- Password show/hide toggle ----
-  const passInput = document.getElementById('tPass');
-  const toggleBtn = document.getElementById('togglePass');
-  toggleBtn.addEventListener('click', () => {
-    const isHidden = passInput.type === 'password';
-    passInput.type = isHidden ? 'text' : 'password';
-    toggleBtn.textContent = isHidden ? 'Hide' : 'Show';
-  });
+  function showForceChange() {
+    hideAllViews();
+    forceChangeView.style.display = 'block';
+    logoutBtn.style.display = 'inline-flex';
+  }
+
+  // A teacher must change their password before reaching the dashboard until
+  // their user_metadata carries password_changed: true (set the first time
+  // they successfully change it, see forceChangeForm handler below).
+  function needsPasswordChange(s) {
+    return !s?.user?.user_metadata?.password_changed;
+  }
+
+  // ---- Reusable password show/hide toggle ----
+  function wireToggle(inputId, btnId) {
+    const input = document.getElementById(inputId);
+    const btn = document.getElementById(btnId);
+    btn.addEventListener('click', () => {
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? 'Hide' : 'Show';
+    });
+  }
+  wireToggle('tPass', 'togglePass');
+  wireToggle('newPass1', 'toggleNewPass1');
+  wireToggle('newPass2', 'toggleNewPass2');
 
   // ---- Login ----
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -63,6 +87,51 @@
       return;
     }
     session = data.session;
+    if (needsPasswordChange(session)) {
+      showForceChange();
+    } else {
+      showLoggedIn();
+    }
+  });
+
+  // ---- Forced first-login password change ----
+  document.getElementById('forceChangeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorBox = document.getElementById('forceChangeError');
+    errorBox.style.display = 'none';
+
+    const p1 = document.getElementById('newPass1').value;
+    const p2 = document.getElementById('newPass2').value;
+
+    if (p1 !== p2) {
+      errorBox.textContent = "Passwords don't match.";
+      errorBox.style.display = 'block';
+      return;
+    }
+    if (p1.length < 8) {
+      errorBox.textContent = 'Password must be at least 8 characters.';
+      errorBox.style.display = 'block';
+      return;
+    }
+
+    const btn = document.getElementById('forceChangeSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving\u2026';
+
+    const { data, error } = await sb.auth.updateUser({
+      password: p1,
+      data: { password_changed: true },
+    });
+
+    if (error) {
+      errorBox.textContent = error.message;
+      errorBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Set password and continue';
+      return;
+    }
+
+    session = { ...session, user: data.user };
     showLoggedIn();
   });
 
@@ -555,7 +624,11 @@
   sb.auth.getSession().then(({ data }) => {
     if (data.session) {
       session = data.session;
-      showLoggedIn();
+      if (needsPasswordChange(session)) {
+        showForceChange();
+      } else {
+        showLoggedIn();
+      }
     } else {
       showLoggedOut();
     }

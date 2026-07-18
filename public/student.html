@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>My Level — Shakespeare Language Center</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="brand"><img src="images/slc-logo.png" alt="SLC" class="brand-logo"> Shakespeare Language Center</div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">Dark</button>
+  </div>
+
+  <div class="container narrow">
+    <div class="card">
+      <div class="eyebrow">Student panel</div>
+      <h1>Your result</h1>
+      <p class="lede">Enter the email you used to take the exam to see your English level.</p>
+
+      <div id="errorBox" class="error-box" style="display:none;"></div>
+      <div id="resultBox" style="display:none;"></div>
+
+      <form id="lookupForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" required autocomplete="email">
+        <button type="submit" class="btn btn-primary btn-block">Check my level</button>
+      </form>
+
+      <p class="muted mt-24"><a href="index.html">← Back to exam start</a></p>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+const form = document.getElementById('lookupForm');
+const errorBox = document.getElementById('errorBox');
+const resultBox = document.getElementById('resultBox');
+const emailInput = document.getElementById('email');
+
+async function lookup(email) {
+  errorBox.style.display = 'none';
+  resultBox.style.display = 'none';
+  try {
+    const res = await fetch('/api/student-status?email=' + encodeURIComponent(email));
+    const data = await res.json();
+    if (!res.ok && res.status !== 404) throw new Error(data.message || 'Something went wrong.');
+
+    if (data.status === 'not_found' || !data.status) {
+      errorBox.textContent = "We couldn't find a record for that email.";
+      errorBox.style.display = 'block';
+      return;
+    }
+    if (data.status !== 'completed') {
+      errorBox.textContent = data.message;
+      errorBox.style.display = 'block';
+      return;
+    }
+    resultBox.innerHTML = `
+      <p class="muted mb-16">Hi ${data.full_name || ''}, here's your result:</p>
+      <div class="level-badge badge-${levelSlug(data.level)}">${data.level}</div>
+      <p class="muted mt-24">Ask your teacher for detailed feedback on your strengths and areas to work on.</p>
+    `;
+    resultBox.style.display = 'block';
+  } catch (err) {
+    errorBox.textContent = err.message;
+    errorBox.style.display = 'block';
+  }
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  lookup(emailInput.value.trim());
+});
+
+// Auto-check if redirected here right after submitting the exam.
+const params = new URLSearchParams(window.location.search);
+const prefill = params.get('email') || localStorage.getItem('pending_exam_email');
+if (prefill) {
+  emailInput.value = prefill;
+  lookup(prefill);
+}
+</script>
+</body>
+</html>

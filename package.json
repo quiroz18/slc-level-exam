@@ -1,0 +1,9 @@
+{
+  "name": "slc-level-exam",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shakespeare Language Center (SLC) - English Level Placement Exam - Netlify + Supabase",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Exam in progress — Shakespeare Language Center</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="brand"><img src="images/slc-logo.png" alt="SLC" class="brand-logo"> Shakespeare Language Center</div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">Dark</button>
+  </div>
+
+  <div class="container">
+    <div class="exam-header">
+      <div class="timer-row">
+        <span class="timer-label">Time remaining</span>
+        <span class="timer-value mono" id="timerValue">60:00</span>
+      </div>
+      <div class="ink-track"><div class="ink-fill" id="inkFill" style="width:100%;"></div></div>
+      <p class="muted" style="margin:6px 0 0; font-size:0.8rem;">Answer independently — this is what makes your result useful.</p>
+      <div class="nav-dots" id="navDots"></div>
+    </div>
+
+    <div class="card">
+      <div class="q-count mono" id="qCount">Question 1 of 50</div>
+      <div class="tag" id="qTag"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="qOptions"></div>
+
+      <div class="exam-nav">
+        <button class="btn btn-secondary" id="prevBtn">← Previous</button>
+        <button class="btn btn-primary" id="nextBtn">Next →</button>
+        <button class="btn btn-primary" id="submitBtn" style="display:none;">Submit exam</button>
+      </div>
+    </div>
+
+    <p class="muted mt-24" id="saveStatus"></p>
+  </div>
+</div>
+
+<!-- Submit confirmation -->
+<div id="confirmOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:50;">
+  <div class="card" style="max-width:420px; margin:20px;">
+    <h3>Submit your exam?</h3>
+    <p class="lede" id="confirmText">You still have unanswered questions. Once submitted, you cannot make changes.</p>
+    <div class="exam-nav">
+      <button class="btn btn-secondary" id="cancelSubmit">Go back</button>
+      <button class="btn btn-primary" id="confirmSubmit">Yes, submit</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/questions.js"></script>
+<script src="js/exam.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>SLC Level Exam — Shakespeare Language Center</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="brand"><img src="images/slc-logo.png" alt="SLC" class="brand-logo"> Shakespeare Language Center</div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">Dark</button>
+  </div>
+
+  <div class="container narrow">
+    <img src="images/slc-cover.png" alt="Shakespeare Language Center — SLC Level Exam" class="cover-banner">
+    <div class="card">
+      <div class="eyebrow">SLC English Placement Exam</div>
+      <h1>Let's find your English level</h1>
+      <p class="lede">This exam has 50 multiple-choice questions and a 1-hour time limit. You can move back and forth between questions before submitting. It can only be taken once, so make sure you're ready before you begin.</p>
+
+      <div class="info-box">
+        <strong>Please answer on your own, without translators, AI tools, dictionaries, or help from someone else.</strong>
+        This exam only exists to find your real English level so your teacher can plan the right classes for you.
+        If your result is higher than your real level because of outside help, the classes may move faster than
+        you can actually follow — and your teacher won't be able to see your real strengths and weaknesses to help
+        you improve. Answering honestly is what makes this useful for you.
+      </div>
+
+      <div id="errorBox" class="error-box" style="display:none;"></div>
+
+      <form id="regForm">
+        <label for="full_name">Full name</label>
+        <input type="text" id="full_name" required autocomplete="name">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required autocomplete="email">
+
+        <label for="phone">Phone number</label>
+        <input type="tel" id="phone" required autocomplete="tel">
+
+        <label style="display:flex; align-items:flex-start; gap:10px; font-weight:400; color:var(--text); margin-bottom:20px;">
+          <input type="checkbox" id="honestyCheck" required style="width:18px; height:18px; margin-top:2px; accent-color:var(--accent);">
+          <span>I understand this exam measures my real English level, and I will answer on my own without translators, AI, or outside help.</span>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block" id="startBtn">Start the exam</button>
+      </form>
+
+      <p class="muted mt-24">Already taken it? <a href="student.html">Check your level here.</a> &nbsp;·&nbsp; <a href="teacher.html">Teacher login</a></p>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+document.getElementById('regForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errorBox = document.getElementById('errorBox');
+  errorBox.style.display = 'none';
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+
+  const full_name = document.getElementById('full_name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+
+  try {
+    const data = await apiCall('start-attempt', {
+      method: 'POST',
+      body: { full_name, email, phone, device_id: getDeviceId() },
+    });
+    sessionStorage.setItem('exam_student_id', data.student_id);
+    sessionStorage.setItem('exam_attempt_id', data.attempt_id);
+    sessionStorage.setItem('exam_started_at', data.started_at);
+    sessionStorage.setItem('exam_time_limit', data.time_limit_seconds);
+    sessionStorage.setItem('exam_full_name', full_name);
+    localStorage.setItem('pending_exam_email', email);
+    window.location.href = 'exam.html';
+  } catch (err) {
+    errorBox.textContent = err.message;
+    errorBox.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Start the exam';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Teacher Panel — Shakespeare Language Center</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="brand"><img src="images/slc-logo.png" alt="SLC" class="brand-logo"> Shakespeare Language Center</div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button class="btn btn-secondary" id="logoutBtn" style="display:none;">Log out</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">Dark</button>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="container narrow" id="loginView">
+    <div class="card">
+      <div class="eyebrow">Teacher panel</div>
+      <h1>Log in</h1>
+      <div id="loginError" class="error-box" style="display:none;"></div>
+      <form id="loginForm">
+        <label for="tEmail">Email</label>
+        <input type="email" id="tEmail" required>
+        <label for="tPass">Password</label>
+        <div style="position:relative; margin-bottom:18px;">
+          <input type="password" id="tPass" required style="margin-bottom:0; padding-right:70px;">
+          <button type="button" id="togglePass" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--accent); font-size:0.82rem; font-weight:600; cursor:pointer; padding:6px 8px;">Show</button>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+      </form>
+      <p class="muted mt-24"><a href="index.html">← Back to exam start</a></p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD: student list -->
+  <div class="container wide" id="listView" style="display:none;">
+    <div class="flex-between mb-16">
+      <h1 style="margin:0;">Students</h1>
+      <button class="btn btn-secondary" id="refreshBtn">Refresh</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Status</th><th>Level</th><th>Score</th></tr>
+        </thead>
+        <tbody id="studentRows"></tbody>
+      </table>
+      <p class="muted mt-24" id="emptyMsg" style="display:none;">No students yet.</p>
+    </div>
+  </div>
+
+  <!-- DETAIL VIEW -->
+  <div class="container wide" id="detailView" style="display:none;">
+    <button class="btn btn-secondary mb-16" id="backBtn">← Back to students</button>
+
+    <div class="card mb-16">
+      <div class="flex-between">
+        <div>
+          <h2 id="detName" style="margin:0 0 4px;"></h2>
+          <p class="muted" id="detContact" style="margin:0;"></p>
+        </div>
+        <div style="text-align:right;">
+          <div id="detLevelBadge"></div>
+          <button class="btn btn-danger mt-24" id="resetBtn">Reset attempt</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <h3>Generate teaching report</h3>
+        <p class="muted">Creates a permanent, dated report with strengths, weaknesses, and a teaching plan.</p>
+        <button class="btn btn-primary" id="genReportBtn">Generate report</button>
+      </div>
+      <div class="card">
+        <h3>Saved reports</h3>
+        <div id="reportsList" class="muted">No reports yet.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Question-by-question review</h3>
+      <div id="questionReview"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+<script src="js/teacher.js"></script>
+</body>
+</html>

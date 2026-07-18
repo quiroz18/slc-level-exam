@@ -36,6 +36,30 @@
     </div>
   </div>
 
+  <!-- FORCED PASSWORD CHANGE: shown on first login until the teacher sets their own password -->
+  <div class="container narrow" id="forceChangeView" style="display:none;">
+    <div class="card">
+      <div class="eyebrow">Teacher panel</div>
+      <h1>Set your password</h1>
+      <p class="lede">For security, you need to set your own password before you can continue.</p>
+      <div id="forceChangeError" class="error-box" style="display:none;"></div>
+      <form id="forceChangeForm">
+        <label for="newPass1">New password</label>
+        <div style="position:relative; margin-bottom:18px;">
+          <input type="password" id="newPass1" required minlength="8" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" style="margin-bottom:0; padding-right:70px;">
+          <button type="button" id="toggleNewPass1" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--accent); font-size:0.82rem; font-weight:600; cursor:pointer; padding:6px 8px;">Show</button>
+        </div>
+        <label for="newPass2">Confirm password</label>
+        <div style="position:relative; margin-bottom:18px;">
+          <input type="password" id="newPass2" required minlength="8" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" style="margin-bottom:0; padding-right:70px;">
+          <button type="button" id="toggleNewPass2" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--accent); font-size:0.82rem; font-weight:600; cursor:pointer; padding:6px 8px;">Show</button>
+        </div>
+        <p class="muted mb-16" style="margin-top:-6px;">At least 8 characters.</p>
+        <button type="submit" class="btn btn-primary btn-block" id="forceChangeSubmitBtn">Set password and continue</button>
+      </form>
+    </div>
+  </div>
+
   <!-- DASHBOARD: student list -->
   <div class="container wide" id="listView" style="display:none;">
     <div class="flex-between mb-16">

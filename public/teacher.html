@@ -27,7 +27,7 @@
         <input type="email" id="tEmail" required>
         <label for="tPass">Password</label>
         <div style="position:relative; margin-bottom:18px;">
-          <input type="password" id="tPass" required autocomplete="new-password" style="margin-bottom:0; padding-right:70px;">
+          <input type="password" id="tPass" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" style="margin-bottom:0; padding-right:70px;">
           <button type="button" id="togglePass" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--accent); font-size:0.82rem; font-weight:600; cursor:pointer; padding:6px 8px;">Show</button>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Log in</button>

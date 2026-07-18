@@ -76,7 +76,11 @@ a { color: var(--accent); }
   display: flex;
   align-items: center;
   gap: 10px;
+  color: var(--text);
+  text-decoration: none;
 }
+
+a.brand:hover { opacity: 0.82; }
 
 .brand .mark {
   width: 10px; height: 10px; border-radius: 50%;
